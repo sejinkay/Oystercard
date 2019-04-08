@@ -28,8 +28,14 @@ describe Oystercard do
     end
   end
 
+  it 'raise an error if theres not enough balance' do
+    minimum_balance = Oystercard::MIN_VALUE
+    expect{ subject.touch_in }.to raise_error "Not enough balance."
+  end
+
   describe 'journey status' do
     it 'when user touches in they are on in journey' do
+      subject.top_up(5)
       expect(subject.touch_in).to eq true
     end
 
@@ -40,6 +46,7 @@ describe Oystercard do
     it { is_expected.to respond_to :in_journey? }
 
     it 'checks if user is in journey?' do
+      subject.top_up(5)
       subject.touch_in
       expect(subject).to be_in_journey
       subject.touch_out
