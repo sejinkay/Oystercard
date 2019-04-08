@@ -14,6 +14,12 @@ describe Oystercard do
     end
   end
 
+  describe '#deduct' do
+    it 'deducts value from the balance' do
+      expect{ subject.deduct 5 }. to change{ subject.balance }.by -5
+    end
+  end
+
   describe 'maximum value' do
     it 'raise an error if top up value exceeds max value' do
       maximum_balance = Oystercard::MAX_VALUE
