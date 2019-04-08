@@ -27,4 +27,24 @@ describe Oystercard do
       expect{ subject.top_up 1 }.to raise_error "Exceeds maximum value #{maximum_balance}."
     end
   end
+
+  describe 'journey status' do
+    it 'when user touches in they are on in journey' do
+      expect(subject.touch_in).to eq true
+    end
+
+    it 'when user touches out they have finished journey' do
+      expect(subject.touch_out).to eq false
+    end
+
+    it { is_expected.to respond_to :in_journey? }
+
+    it 'checks if user is in journey?' do
+      subject.touch_in
+      expect(subject).to be_in_journey
+      subject.touch_out
+      expect(subject).not_to be_in_journey
+    end
+
+  end
 end
