@@ -4,6 +4,7 @@ class Oystercard
 
   MAX_VALUE = 90
   MIN_VALUE = 1
+  MIN_CHARGE = 1
 
   def initialize
     @balance = 0
@@ -23,7 +24,7 @@ class Oystercard
 
   def touch_out
     p 'Journey finished'
-    deduct(1)
+    deduct(MIN_CHARGE)
     @status = false
   end
 
