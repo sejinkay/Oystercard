@@ -15,9 +15,10 @@ describe Oystercard do
   end
 
   describe '#deduct' do
+    let(:station){ double :station }
     it 'deducts the fare when touch_out' do
       subject.top_up(5)
-      subject.touch_in
+      subject.touch_in(station)
       expect{ subject.touch_out}.to change{ subject.balance }.by -(Oystercard::MIN_CHARGE)
     end
   end
@@ -30,30 +31,32 @@ describe Oystercard do
     end
   end
 
-  it 'raise an error if theres not enough balance' do
-    minimum_balance = Oystercard::MIN_VALUE
-    expect{ subject.touch_in }.to raise_error "Not enough balance."
-  end
-
   describe 'journey status' do
-    it 'when user touches in they are on in journey' do
-      subject.top_up(5)
-      expect(subject.touch_in).to eq true
-    end
 
-    it 'when user touches out they have finished journey' do
-      expect(subject.touch_out).to eq false
+    describe '#touch_in' do
+      let(:station){ double :station }
+
+      it 'checks if user is in journey?' do
+        subject.top_up(5)
+        subject.touch_in(station)
+        expect(subject).to be_in_journey
+        subject.touch_out
+        expect(subject).not_to be_in_journey
+      end
+
+      it 'stores the entry station' do
+        subject.top_up(5)
+        subject.touch_in(station)
+        expect(subject.entry_station).to eq station
+      end
+
+      it 'raise an error if theres not enough balance' do
+        minimum_balance = Oystercard::MIN_VALUE
+        expect{ subject.touch_in(station) }.to raise_error "Not enough balance."
+      end
     end
 
     it { is_expected.to respond_to :in_journey? }
-
-    it 'checks if user is in journey?' do
-      subject.top_up(5)
-      subject.touch_in
-      expect(subject).to be_in_journey
-      subject.touch_out
-      expect(subject).not_to be_in_journey
-    end
 
   end
 end
