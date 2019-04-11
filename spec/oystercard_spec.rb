@@ -19,8 +19,14 @@ describe Oystercard do
     it 'deducts the fare when touch_out' do
       subject.top_up(5)
       subject.touch_in(station)
-      expect{ subject.touch_out}.to change{ subject.balance }.by -(Oystercard::MIN_CHARGE)
+      expect{ subject.touch_out(station)}.to change{ subject.balance }.by -(Oystercard::MIN_CHARGE)
     end
+  end
+
+  let(:station){ double :station }
+  it 'saves exit station' do
+    subject.touch_out(station)
+    expect(subject.exit_station).to eq station
   end
 
   describe 'maximum value' do
@@ -33,6 +39,10 @@ describe Oystercard do
 
   describe 'journey status' do
 
+    it 'has an empty list of journeys' do
+      expect(subject.journey_record).to be_empty
+    end
+
     describe '#touch_in' do
       let(:station){ double :station }
 
@@ -40,7 +50,7 @@ describe Oystercard do
         subject.top_up(5)
         subject.touch_in(station)
         expect(subject).to be_in_journey
-        subject.touch_out
+        subject.touch_out(station)
         expect(subject).not_to be_in_journey
       end
 
@@ -53,6 +63,15 @@ describe Oystercard do
       it 'raise an error if theres not enough balance' do
         minimum_balance = Oystercard::MIN_VALUE
         expect{ subject.touch_in(station) }.to raise_error "Not enough balance."
+      end
+    end
+
+    describe '#add_journey' do
+      it 'stores a journey' do
+        subject.top_up(5)
+        subject.touch_in(station)
+        subject.touch_out(station)
+        expect{ subject.add_journey }.to change {subject.journey_record.count}.by(1)
       end
     end
 
