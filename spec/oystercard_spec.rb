@@ -79,3 +79,15 @@ describe Oystercard do
 
   end
 end
+
+describe Station do
+  subject { described_class.new("Angel", 1)}
+
+  it 'checks if there\'s name' do
+  expect(subject.name).to eq "Angel"
+  end
+
+  it 'checks if there\'s zone' do
+  expect(subject.zone).to eq 1
+  end
+end
