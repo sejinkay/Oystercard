@@ -8,14 +8,29 @@ class Station
   end
 end
 
-class Journey
-
+class JourneyLog
   attr_reader :entry_station
   attr_reader :exit_station
   attr_reader :journey_record
 
-  def initialize
+  def initialize(journey_class = Journey.new)
+    @journey_class = journey_class
     @journey_record = []
+  end
+
+  def start(station)
+    @exit_station = nil
+    @entry_station = station
+  end
+
+  def finish(station)
+    @exit_station = station
+    add_journey
+    @entry_station = nil
+  end
+
+  def journeys
+    @journey_record.dup
   end
 
   def add_journey
@@ -23,21 +38,17 @@ class Journey
     @journey_record << journey
   end
 
-  def touch_in(station)
-    @exit_station = nil
-    @entry_station = station
+  private
+  def current_journey
   end
+end
 
-  def touch_out(station)
-    @exit_station = station
-    add_journey
-    @entry_station = nil
-  end
+class Journey
+  attr_reader :entry_station
 
   def in_journey?
     !!entry_station
   end
-
 end
 
 class Oystercard
@@ -60,7 +71,7 @@ class Oystercard
 
   def touch_in(station)
     raise "Not enough balance." if @balance < MIN_VALUE
-    @journey = Journey.new
+    @journey = JourneyLog.new
     @journey.touch_in(station)
   end
 
