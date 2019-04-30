@@ -7,7 +7,7 @@ How to run
 
 1. Clone this repo
 2. Run bundle install
-3. Run `irb -r ./oystercard.rb`
+3. Run `irb -r ./lib/oystercard.rb`
 4. Good to go!
 
 Project status

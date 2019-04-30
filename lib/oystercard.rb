@@ -1,36 +1,19 @@
 class Station
   attr_reader :name
   attr_reader :zone
-
   def initialize(name, zone)
     @name = name
     @zone = zone
   end
 end
 
-class JourneyLog
+class Journey
   attr_reader :entry_station
   attr_reader :exit_station
   attr_reader :journey_record
 
-  def initialize(journey_class = Journey.new)
-    @journey_class = journey_class
+  def initialize
     @journey_record = []
-  end
-
-  def start(station)
-    @exit_station = nil
-    @entry_station = station
-  end
-
-  def finish(station)
-    @exit_station = station
-    add_journey
-    @entry_station = nil
-  end
-
-  def journeys
-    @journey_record.dup
   end
 
   def add_journey
@@ -38,13 +21,16 @@ class JourneyLog
     @journey_record << journey
   end
 
-  private
-  def current_journey
+  def touch_in(station)
+    @exit_station = nil
+    @entry_station = station
   end
-end
 
-class Journey
-  attr_reader :entry_station
+  def touch_out(station)
+    @exit_station = station
+    add_journey
+    @entry_station = nil
+  end
 
   def in_journey?
     !!entry_station
@@ -60,8 +46,8 @@ class Oystercard
   MIN_CHARGE = 1
 
   def initialize
-    @balance = 0
-    @journey
+      @balance = 0
+      @journey
   end
 
   def top_up(value)
@@ -71,7 +57,7 @@ class Oystercard
 
   def touch_in(station)
     raise "Not enough balance." if @balance < MIN_VALUE
-    @journey = JourneyLog.new
+    @journey = Journey.new
     @journey.touch_in(station)
   end
 
@@ -85,7 +71,6 @@ class Oystercard
   end
 
 private
-
   def deduct(value)
     @balance -= value
   end
